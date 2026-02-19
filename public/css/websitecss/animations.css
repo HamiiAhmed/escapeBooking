@@ -1,0 +1,89 @@
+.animate-after-loader {
+    opacity: 0;
+}
+.animate-on-scroll {
+    opacity: 0;
+}
+
+.fade-in-left {
+    animation: fadeInLeft 0.5s ease-out forwards;
+}
+
+.fade-in-right {
+    animation: fadeInRight 0.5s ease-out forwards;
+}
+
+.fade-in-top {
+    animation: fadeInTop 0.5s ease-out forwards;
+}
+
+.fade-in-bottom {
+    animation: fadeInBottom 0.5s ease-out forwards;
+}
+
+/* Keyframe animations */
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInTop {
+    from {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInBottom {
+    from {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Optional: Animation delay classes */
+.delay-0-5s {
+    animation-delay: 0.5s;
+}
+
+.delay-1s {
+    animation-delay: 1s;
+}
+
+.delay-2s {
+    animation-delay: 2s;
+}
+
+/* Optional: Base animation properties */
+.animated {
+    animation-fill-mode: both;
+}
