@@ -17,8 +17,7 @@
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: transparent;
-            /* FIXED: trasparent → transparent */
+            background: transparent url("{{ asset('images/bg.jpeg') }}") no-repeat center center fixed;
             min-height: 100vh;
             padding: 20px;
         }
@@ -78,7 +77,7 @@
         }
 
         .packages-section.active {
-            max-height: 1200px;
+            max-height: 2000px;
             padding: 25px;
         }
 
@@ -127,7 +126,7 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             border: 2px solid transparent;
-            height: 175px;
+            height: 200px;
             display: flex;
             flex-direction: column;
         }
@@ -139,8 +138,8 @@
         }
 
         .compact-package-card.selected {
-            border-color: #27ae60 !important;
-            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3);
+            border-color: #cf9b5d !important;
+            box-shadow: 0 10px 30px rgba(207, 155, 93, 0.3);
         }
 
         .compact-image {
@@ -155,7 +154,7 @@
         }
 
         .compact-content {
-            padding: 15px;
+            padding: 10px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -163,28 +162,28 @@
 
         .compact-name {
             font-weight: 700;
-            font-size: 20px;
+            font-size: 17px;
             color: #2c3e50;
             margin-bottom: 8px;
             overflow: hidden;
         }
 
         .compact-price {
-            font-size: 18px;
-            font-weight: 800;
+            font-size: 14px;
+            font-weight: 600;
             color: #e74c3c;
             margin-bottom: 8px;
         }
 
         .compact-duration {
-            font-size: 14px;
+            font-size: 12px;
             color: #27ae60;
             font-weight: 600;
             margin-bottom: 5px;
         }
 
         .compact-bookings {
-            font-size: 14px;
+            font-size: 12px;
             color: #7f8c8d;
             margin-bottom: auto;
         }
@@ -239,8 +238,9 @@
         }
 
         .time-slot.available {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            color: white;
+            background: white;
+            color: #cf9b5d;
+            border: 2px solid #cf9b5d;
         }
 
         .time-slot.booked {
@@ -254,12 +254,14 @@
         }
 
         .time-slot.selected-slot {
-            box-shadow: 0 0 0 3px #f39c12;
+            box-shadow: 0 0 6px 1px #cf9b5d;
+            background: #6b0501;
+            color: white;
         }
 
         /* BOOKING FORM */
         .booking-form {
-            background: white;
+            background: #6b0501;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -272,7 +274,7 @@
         .form-group label {
             display: block;
             font-weight: 600;
-            color: #2c3e50;
+            color: #fff;
             margin-bottom: 5px;
         }
 
@@ -323,7 +325,7 @@
         .book-now-btn {
             width: 100%;
             padding: 15px;
-            background: #6b0501;
+            background: #cf9b5d;
             color: white;
             border: none;
             border-radius: 10px;
@@ -334,7 +336,8 @@
         }
 
         .book-now-btn:hover {
-            background: #6b0501;
+            background: white;
+            color: #cf9b5d;
         }
 
         .book-now-btn:disabled {
@@ -368,7 +371,7 @@
         <!-- PACKAGES SECTION -->
         <div class="packages-section" id="packagesSection">
             <div class="packages-header">
-                <h3 id="selectedDateTitle">📅 Select Date First</h3>
+                <h3 id="selectedDateTitle">Select Date First</h3>
                 <button onclick="hidePackages()" class="back-btn">
                     <i class="fas fa-arrow-left"></i> Back to Calendar
                 </button>
@@ -421,7 +424,7 @@
 
         function showPackages(dateStr) {
             selectedDate = dateStr;
-            $('#selectedDateTitle').html('📅 ' + new Date(dateStr).toLocaleDateString('ur-PK'));
+            $('#selectedDateTitle').html(new Date(dateStr).toLocaleDateString('ur-PK'));
             $('#packagesGrid').empty();
 
             packages.forEach(function(pkg) {
@@ -433,8 +436,8 @@
                         <div class="compact-content">
                             <div class="compact-name">${pkg.name}</div>
                             <div class="compact-price">Rs ${pkg.price}</div>
-                            <div class="compact-duration">⏰ ${pkg.duration_minutes}min</div>
-                            <div class="compact-bookings">👥 ${pkg.min_bookings}-${pkg.max_bookings}</div>
+                            <div class="compact-duration">Duration: ${pkg.duration_minutes}min</div>
+                            <div class="compact-bookings">People # ${pkg.min_bookings}-${pkg.max_bookings}</div>
                             <button class="compact-book-btn">Book Now</button>
                         </div>
                     </div>
@@ -489,7 +492,7 @@
             $('#packagesGrid').after(`
         <div class="slots-section" id="slotsSection">
             <div class="slots-header">
-                <span>🕒 Available Time Slots - ${new Date(dateStr).toLocaleDateString('ur-PK')}</span>
+                <span>Available Time Slots - ${new Date(dateStr).toLocaleDateString('ur-PK')}</span>
                 <button onclick="hideSlots()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#dc3545;">✕</button>
             </div>
             <div class="time-slots-grid" id="slotsGrid"></div>
@@ -519,8 +522,8 @@
                 <input type="hidden" name="package_max" value="${package.max_bookings}">
                 <input type="hidden" name="package_price" value="${package.price}">
                 <input type="hidden" name="selected_slot" id="selectedSlot">
-                <div id="totalPrice" style="font-size:18px;font-weight:bold;color:#27ae60;margin:15px 0;text-align:center;">Total: Rs 0</div>
-                <button type="submit" class="book-now-btn" id="bookBtn" disabled>📅 Proceed to Payment</button>
+                <div id="totalPrice" style="font-size:18px;font-weight:bold;color:white;margin:15px 0;text-align:center;">Total: Rs 0</div>
+                <button type="submit" class="book-now-btn" id="bookBtn" disabled> Proceed to Payment</button>
             </form>
         </div>
     `);
@@ -587,7 +590,7 @@
         $(document).on('submit', '#bookingForm', function(e) {
             e.preventDefault();
             $('#bookBtn').prop('disabled', true);
-            
+
             if (!selectedSlot) {
                 alert('First select the time slot!');
                 $('#bookBtn').prop('disabled', false);
