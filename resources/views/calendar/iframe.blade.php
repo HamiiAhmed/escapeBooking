@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EscapeBooking - Monthly Calendar</title>
+    <title>EscapeBooking - Package First Calendar</title>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
@@ -28,7 +28,6 @@
             background: white;
             border-radius: 16px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            /* overflow: hidden; REMOVED for smooth scroll */
         }
 
         .header {
@@ -36,6 +35,7 @@
             color: white;
             padding: 15px;
             text-align: center;
+            border-radius: 10px 10px 0px 0px;
         }
 
         .header h1 {
@@ -43,42 +43,11 @@
             margin: 0;
         }
 
-        #calendar {
-            padding: 30px;
-        }
-
-        /* CALENDAR COLORS */
-        .fc-daygrid-day.fc-day-available {
-            background: #6b0501 !important;
-            border: 2px solid #cf9b5d !important;
-            cursor: pointer;
-        }
-
-        .fc-daygrid-day.fc-day-past {
-            background: #f8f9fa !important;
-            color: #6c757d !important;
-            cursor: not-allowed !important;
-        }
-
-        .fc-event {
-            border-radius: 4px !important;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* PACKAGES SECTION */
+        /* PACKAGES SECTION - NOW AT TOP */
         .packages-section {
-            padding: 0 25px;
-            background: #f8f9fa;
-            border-top: 3px solid #6b0501;
-            max-height: 0;
-            overflow: hidden;
-            transition: all 0.5s ease;
-        }
-
-        .packages-section.active {
-            max-height: 2000px;
             padding: 25px;
+            background: #f8f9fa;
+            border-bottom: 3px solid #6b0501;
         }
 
         .packages-header {
@@ -86,29 +55,12 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e9ecef;
         }
 
-        #selectedDateTitle {
+        .packages-header h3 {
             color: #6b0501;
             font-size: 20px;
             margin: 0;
-        }
-
-        .back-btn {
-            background: #6b0501;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
-        }
-
-        .back-btn:hover {
-            background: #cf9b5d;
         }
 
         .packages-grid {
@@ -147,10 +99,6 @@
             width: 100%;
             object-fit: cover;
             background: linear-gradient(45deg, #6b0501, #cf9b5d);
-        }
-
-        .fc .fc-daygrid-day-number {
-            color: white !important;
         }
 
         .compact-content {
@@ -198,6 +146,73 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: auto;
+        }
+
+        /* CALENDAR SECTION - SHOWS AFTER PACKAGE SELECTION */
+        .calendar-container {
+            padding: 0 25px;
+            background: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .calendar-container.active {
+            max-height: 20000px;
+            padding: 25px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        #selectedPackageTitle {
+            color: #6b0501;
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .back-to-packages-btn {
+            background: #6b0501;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .back-to-packages-btn:hover {
+            background: #cf9b5d;
+        }
+
+        /* CALENDAR COLORS */
+        .fc-daygrid-day.fc-day-available {
+            background: #6b0501 !important;
+            border: 2px solid #cf9b5d !important;
+            cursor: pointer;
+        }
+
+        .fc-daygrid-day.fc-day-past {
+            background: #f8f9fa !important;
+            color: #6c757d !important;
+            cursor: not-allowed !important;
+        }
+
+        .fc .fc-daygrid-day-number {
+            color: white !important;
+        }
+
+        .fc-event {
+            border-radius: 4px !important;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
 
         /* SLOTS SECTION */
@@ -278,48 +293,33 @@
             margin-bottom: 5px;
         }
 
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #6b0501;
-            box-shadow: 0 0 0 3px rgba(141, 27, 19, 0.1);
-        }
-
+        .form-group input,
         .form-group select {
             width: 100%;
             padding: 12px;
             border: 2px solid #e9ecef;
             border-radius: 8px;
             font-size: 16px;
+            transition: border 0.3s;
             background-color: #fff;
-            color: #2c3e50;
-            transition: border 0.3s, box-shadow 0.3s;
+        }
 
-            /* Remove default styling */
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6b0501;
+            box-shadow: 0 0 0 3px rgba(141, 27, 19, 0.1);
+        }
+
+        .form-group select {
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-
-            /* Custom dropdown arrow */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%232c3e50'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z' clip-rule='evenodd'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 12px center;
             background-size: 18px;
             padding-right: 40px;
-        }
-
-        .form-group select:focus {
-            outline: none;
-            border-color: #6b0501;
-            box-shadow: 0 0 0 3px rgba(141, 27, 19, 0.1);
         }
 
         .book-now-btn {
@@ -345,17 +345,45 @@
             cursor: not-allowed;
         }
 
+        #totalPrice {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            margin: 15px 0;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .packages-grid {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
 
             .compact-package-card {
-                height: 200px;
+                height: 180px;
             }
 
             .compact-image {
                 height: 80px;
+            }
+
+            .calendar-container.active {
+                padding: 15px;
+            }
+
+            .slots-section {
+                padding: 6px;
+            }
+
+            .booking-form {
+                padding: 12px;
+            }
+
+            .fc .fc-toolbar-title {
+                font-size: 18px;
+            }
+
+            .time-slot {
+                padding: 8px 8px;
             }
         }
     </style>
@@ -366,35 +394,47 @@
         <div class="header">
             <h1><i class="fas fa-calendar-alt"></i> Escape Booking</h1>
         </div>
-        <div id="calendar"></div>
 
-        <!-- PACKAGES SECTION -->
+        <!-- PACKAGES SECTION - ALWAYS VISIBLE -->
         <div class="packages-section" id="packagesSection">
             <div class="packages-header">
-                <h3 id="selectedDateTitle">Select Date First</h3>
-                <button onclick="hidePackages()" class="back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Calendar
-                </button>
+                <h3><i class="fas fa-gift"></i> Select a Package</h3>
             </div>
             <div class="packages-grid" id="packagesGrid"></div>
+        </div>
+
+        <!-- CALENDAR SECTION - APPEARS AFTER PACKAGE SELECTION -->
+        <div class="calendar-container" id="calendarContainer">
+            <div class="calendar-header">
+                <h3 id="selectedPackageTitle">Select Date for Package</h3>
+                <button onclick="hideCalendar()" class="back-to-packages-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Packages
+                </button>
+            </div>
+            <div id="calendar"></div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- head section mein -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <script>
         // PHP Packages Data to JS
         const packages = @json($packages);
         let selectedPackageId = null;
+        let selectedPackage = null;
         let selectedDate = null;
         let selectedSlot = null;
+        let calendar = null;
 
         $(document).ready(function() {
+            // Display packages first
+            displayPackages();
+
+            // Initialize calendar but don't render yet
             var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
+            calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 headerToolbar: {
                     left: 'prev,next',
@@ -408,8 +448,7 @@
                 height: 'auto',
                 dateClick: function(info) {
                     if (info.dayEl.classList.contains('fc-day-past')) return false;
-                    showPackages(info.dateStr);
-                    hideSlots();
+                    handleDateSelection(info.dateStr);
                 },
                 dayCellClassNames: function(arg) {
                     var today = new Date();
@@ -419,33 +458,57 @@
                     return cellDate < today ? ['fc-day-past'] : ['fc-day-available'];
                 }
             });
-            calendar.render();
         });
 
-        function showPackages(dateStr) {
-            selectedDate = dateStr;
-            $('#selectedDateTitle').html(new Date(dateStr).toLocaleDateString('ur-PK'));
+        function displayPackages() {
             $('#packagesGrid').empty();
 
             packages.forEach(function(pkg) {
-
-
                 var html = `
-                    <div class="compact-package-card" onclick="selectPackage(${pkg.id}, '${dateStr}')">
-                        
+                    <div class="compact-package-card" onclick="selectPackage(${pkg.id}, this)">
                         <div class="compact-content">
                             <div class="compact-name">${pkg.name}</div>
                             <div class="compact-price">Rs ${pkg.price}</div>
                             <div class="compact-duration">Duration: ${pkg.duration_minutes}min</div>
                             <div class="compact-bookings">People # ${pkg.min_bookings}-${pkg.max_bookings}</div>
-                            <button class="compact-book-btn">Book Now</button>
+                            <button class="compact-book-btn">Select Package</button>
                         </div>
                     </div>
                 `;
                 $('#packagesGrid').append(html);
             });
+        }
 
-            $('#packagesSection').addClass('active');
+        function selectPackage(packageId, element) {
+            selectedPackageId = packageId;
+            selectedPackage = packages.find(p => p.id === packageId);
+            
+            $('.compact-package-card').removeClass('selected');
+            $(element).addClass('selected');
+
+            // Update calendar header with package name
+            $('#selectedPackageTitle').html(`Select Date`);
+            // $('#selectedPackageTitle').html(`Select Date for: ${selectedPackage.name}`);
+
+            // Show calendar
+            $('#calendarContainer').addClass('active');
+            hideSlots();
+            setTimeout(() => {
+                calendar.render();
+                document.getElementById('calendarContainer').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 150);
+        }
+
+        function hideCalendar() {
+            $('#calendarContainer').removeClass('active');
+            selectedPackageId = null;
+            selectedPackage = null;
+            $('.compact-package-card').removeClass('selected');
+            hideSlots();
+            
             setTimeout(() => {
                 document.getElementById('packagesSection').scrollIntoView({
                     behavior: 'smooth',
@@ -454,79 +517,72 @@
             }, 150);
         }
 
-        function hidePackages() {
-            $('#packagesSection').removeClass('active');
-            setTimeout(() => {
-                document.getElementById('calendar').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }, 150);
-        }
+        function handleDateSelection(dateStr) {
+            if (!selectedPackageId) {
+                alert('Please select a package first!');
+                return;
+            }
 
-        function selectPackage(packageId, dateStr) {
-            selectedPackageId = packageId;
-            $('.compact-package-card').removeClass('selected');
-            $(event.target).closest('.compact-package-card').addClass('selected');
+            selectedDate = dateStr;
 
             // AJAX call for slots
             $.ajax({
                 url: '/calendar/getBookings',
                 method: 'GET',
                 data: {
-                    package_id: packageId,
+                    package_id: selectedPackageId,
                     date: dateStr
                 },
                 success: function(response) {
-                    showSlots(packageId, dateStr, response.slots, response.package);
+                    showSlots(selectedPackageId, dateStr, response.slots, response.package);
                 },
                 error: function() {
-                    alert('Sometihing went wrong. Please refresh!');
+                    alert('Something went wrong. Please refresh!');
                 }
             });
         }
 
-        function showSlots(packageId, dateStr, slots, package) {
+        function showSlots(packageId, dateStr, slots, packageData) {
             $('#slotsSection').remove(); // Previous slots clear
 
-            $('#packagesGrid').after(`
-        <div class="slots-section" id="slotsSection">
-            <div class="slots-header">
-                <span>Available Time Slots - ${new Date(dateStr).toLocaleDateString('ur-PK')}</span>
-                <button onclick="hideSlots()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#dc3545;">✕</button>
-            </div>
-            <div class="time-slots-grid" id="slotsGrid"></div>
-            <form class="booking-form" id="bookingForm">
-                <div class="form-group">
-                    <label>Customer Name *</label>
-                    <input type="text" name="customer_name" required placeholder="Full Name">
+            $('#calendar').after(`
+                <div class="slots-section" id="slotsSection">
+                    <div class="slots-header">
+                        <span>Available Time Slots - ${new Date(dateStr).toLocaleDateString('ur-PK')}</span>
+                        <button onclick="hideSlots()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#dc3545;">✕</button>
+                    </div>
+                    <div class="time-slots-grid" id="slotsGrid"></div>
+                    <form class="booking-form" id="bookingForm">
+                        <div class="form-group">
+                            <label>Customer Name *</label>
+                            <input type="text" name="customer_name" required placeholder="Full Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Number of People * (${packageData.min_bookings}-${packageData.max_bookings})</label>
+                            <select name="num_people" class="form-select" id="numPeople" required>
+                                <option value="">Select Number</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone *</label>
+                            <input type="tel" name="customer_phone" required placeholder="XXXXXXXXXXX">
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" name="customer_email" required placeholder="email@example.com">
+                        </div>
+                        <!-- Hidden fields -->
+                        <input type="hidden" name="package_id" value="${packageId}">
+                        <input type="hidden" name="date" value="${dateStr}">
+                        <input type="hidden" name="package_min" value="${packageData.min_bookings}">
+                        <input type="hidden" name="package_max" value="${packageData.max_bookings}">
+                        <input type="hidden" name="package_price" value="${packageData.price}">
+                        <input type="hidden" name="selected_slot" id="selectedSlot">
+                        <div id="totalPrice">Total: Rs 0</div>
+                        <button type="submit" class="book-now-btn" id="bookBtn" disabled>Proceed to Payment</button>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label>Number of People * (${package.min_bookings}-${package.max_bookings})</label>
-                    <select name="num_people" class="form-select" id="numPeople" required>
-                        <option value="">Select Number</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Phone *</label>
-                    <input type="tel" name="customer_phone" required placeholder="XXXXXXXXXXX">
-                </div>
-                <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" name="customer_email" required placeholder="email@example.com">
-                </div>
-                <!-- Hidden fields -->
-                <input type="hidden" name="package_id" value="${packageId}">
-                <input type="hidden" name="date" value="${dateStr}">
-                <input type="hidden" name="package_min" value="${package.min_bookings}">
-                <input type="hidden" name="package_max" value="${package.max_bookings}">
-                <input type="hidden" name="package_price" value="${package.price}">
-                <input type="hidden" name="selected_slot" id="selectedSlot">
-                <div id="totalPrice" style="font-size:18px;font-weight:bold;color:white;margin:15px 0;text-align:center;">Total: Rs 0</div>
-                <button type="submit" class="book-now-btn" id="bookBtn" disabled> Proceed to Payment</button>
-            </form>
-        </div>
-    `);
+            `);
 
             // Slots populate
             const slotsGrid = $('#slotsGrid');
@@ -534,19 +590,19 @@
 
             slots.forEach(function(slot) {
                 slotsGrid.append(`
-            <div class="time-slot ${slot.is_available ? 'available' : 'booked'}" 
-                 ${slot.is_available ? `onclick="selectSlot('${slot.start_full}', this)"` : ''}>
-                ${slot.start}<br><small>${slot.end}</small>
-                ${!slot.is_available ? '<br><small>(Booked)</small>' : ''}
-            </div>
-        `);
+                    <div class="time-slot ${slot.is_available ? 'available' : 'booked'}" 
+                         ${slot.is_available ? `onclick="selectSlot('${slot.start_full}', this)"` : ''}>
+                        ${slot.start}<br><small>${slot.end}</small>
+                        ${!slot.is_available ? '<br><small>(Booked)</small>' : ''}
+                    </div>
+                `);
             });
 
-            // ✅ Number of People dropdown populate
+            // Number of People dropdown populate
             const numPeopleSelect = $('#numPeople');
             numPeopleSelect.empty().append('<option value="">Select Number</option>');
 
-            for (let i = package.min_bookings; i <= package.max_bookings; i++) {
+            for (let i = packageData.min_bookings; i <= packageData.max_bookings; i++) {
                 numPeopleSelect.append(`<option value="${i}">${i} People</option>`);
             }
 
@@ -579,12 +635,11 @@
             $('.time-slot').removeClass('selected-slot');
             $(element).addClass('selected-slot');
             $('#selectedSlot').val(slotTime);
-            calculateTotal(); // Recalculate total
+            calculateTotal();
         }
 
         function hideSlots() {
             $('#slotsSection').remove();
-            $('.compact-package-card').removeClass('selected');
         }
 
         $(document).on('submit', '#bookingForm', function(e) {
@@ -592,14 +647,14 @@
             $('#bookBtn').prop('disabled', true);
 
             if (!selectedSlot) {
-                alert('First select the time slot!');
+                alert('Please select a time slot!');
                 $('#bookBtn').prop('disabled', false);
                 return;
             }
 
             const formData = new FormData(this);
             formData.append('selected_slot', selectedSlot);
-            formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // ✅ EXTRA
+            formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
 
             $.ajax({
                 url: '{{ route('booking.initiate') }}',
@@ -613,19 +668,11 @@
                 },
                 success: function(response) {
                     if (response.redirect_url) {
-                        console.log('🔄 Redirecting to:', response.redirect_url);
+                        console.log('Redirecting to:', response.redirect_url);
                         window.location.href = response.redirect_url;
                     }
                 },
-
-                error: function(xhr, errorType, error) {
-                    console.error('❌ AJAX ERROR:', {
-                        status: xhr.status,
-                        statusText: xhr.statusText,
-                        response: xhr.responseText,
-                        errorType: errorType
-                    });
-
+                error: function(xhr) {
                     let errorMsg = 'Booking failed! Please try again.';
 
                     if (xhr.status === 422) {
@@ -643,7 +690,7 @@
                         return;
                     }
 
-                    alert(`❌ ${errorMsg}\n\nStatus: ${xhr.status}\nCheck console for details.`);
+                    alert(`❌ ${errorMsg}`);
                     $('#bookBtn').prop('disabled', false);
                 }
             });
