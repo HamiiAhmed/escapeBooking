@@ -11,7 +11,7 @@ class CalendarController extends Controller
 {
     public function index(Request $request)
     {
-        $packages = Package::where('is_active', true)->get();
+        $packages = Package::where('is_active', true)->orderBy('seq_no')->get();
         return view('calendar.iframe', compact('packages'));
     }
 
