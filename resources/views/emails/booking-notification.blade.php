@@ -106,7 +106,7 @@
 
                 <div class="detail-row">
                     <span class="label">Total Amount:</span>
-                    <span>${{ number_format($booking->total_amount, 2) }}</span>
+                    <span>SAR {{ number_format($booking->total_amount, 2) }}</span>
                 </div>
 
                 <div class="detail-row">
