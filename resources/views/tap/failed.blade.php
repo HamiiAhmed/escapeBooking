@@ -133,7 +133,7 @@
             <div class="failed-header">
                 <i class="fas fa-times-circle"></i>
                 <h1>Booking Failed!</h1>
-                <p class="mb-0">Your payment could not be processed</p>
+                <p class="mb-0">Something went wrong with your booking process.</p>
             </div>
             <div class="failed-body">
                 <!-- Display error message from session if available -->

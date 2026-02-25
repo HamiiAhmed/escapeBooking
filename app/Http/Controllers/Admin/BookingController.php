@@ -8,6 +8,8 @@ use App\Models\{Booking, Module, Package, Payment};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Mail\BookingNotification;
+use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
 {
@@ -58,47 +60,18 @@ class BookingController extends Controller
             ->with('success', 'Booking deleted successfully!');
     }
 
-
-    // public function initiatePayment(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'customer_name' => 'required|string|max:255',
-    //         'customer_phone' => 'required|string',
-    //         'customer_email' => 'required|email',
-    //         'package_id' => 'required|exists:packages,id',
-    //         'date' => 'required|date|after:now',
-    //         'selected_slot' => 'required|date'
-    //     ]);
-
-    //     $package = Package::where('id', $validated['package_id'])->where('is_active', true)->firstOrFail();
-
-    //     // Session save for callback
-    //     session(['pending_booking' => array_merge($validated, [
-    //         'package_price' => $package->price,
-    //         'package_name' => $package->name
-    //     ])]);
-
-    //     // Tap Payment URL generate
-    //     $paymentUrl = $this->generateTapPaymentUrl($package->price, $validated);
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'redirect_url' => $paymentUrl
-    //     ]);
-    // }
-
     public function initiatePayment(Request $request)
     {
         $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
+            'customer_name'  => 'required|string|max:255',
             'customer_phone' => 'required|string',
             'customer_email' => 'required|email',
-            'package_id' => 'required|exists:packages,id',
-            'date' => 'required|date|after_or_equal:today',
-            'selected_slot' => 'required|date',
-            'num_people' => 'required|integer|min:1',
-            'package_min' => 'required|integer',
-            'package_max' => 'required|integer'
+            'package_id'     => 'required|exists:packages,id',
+            'date'           => 'required|date|after_or_equal:today',
+            'selected_slot'  => 'required|date',
+            'num_people'     => 'required|integer|min:1',
+            'package_min'    => 'required|integer',
+            'package_max'    => 'required|integer'
         ]);
 
         $package = Package::findOrFail($validated['package_id']);
@@ -114,29 +87,29 @@ class BookingController extends Controller
 
         try {
             $booking = Booking::create([
-                'user_id' => auth()->id() ?? null,
-                'package_id' => $validated['package_id'],
+                'user_id'            => auth()->id() ?? null,
+                'package_id'         => $validated['package_id'],
                 'booking_start_time' => $validated['selected_slot'],
-                'duration_minutes' => $package->duration_minutes ?? 60,
-                'customer_name' => $validated['customer_name'],
-                'customer_phone' => $validated['customer_phone'],
-                'customer_email' => $validated['customer_email'],
-                'people_count' => $validated['num_people'],
-                'total_amount' => $totalAmount,
-                'status' => 'pending', // Pending until payment confirmed
-                'payment_id' => null
+                'duration_minutes'   => $package->duration_minutes ?? 60,
+                'customer_name'      => $validated['customer_name'],
+                'customer_phone'     => $validated['customer_phone'],
+                'customer_email'     => $validated['customer_email'],
+                'people_count'       => $validated['num_people'],
+                'total_amount'       => $totalAmount,
+                'status'             => 'pending', // Pending until payment confirmed
+                'payment_id'         => null
             ]);
 
             $payment = Payment::create([
                 'booking_id' => $booking->id,
-                'amount' => $totalAmount,
-                'currency' => 'SAR',
-                'status' => 'pending', // Pending until payment confirmed
+                'amount'     => $totalAmount,
+                'currency'   => 'SAR',
+                'status'     => 'pending', // Pending until payment confirmed
                 'payment_method' => 'tap',
                 'transaction_id' => null, // Will be updated after payment
                 'metadata' => json_encode([
-                    'package_name' => $package->name,
-                    'booking_date' => $validated['date'],
+                    'package_name'  => $package->name,
+                    'booking_date'  => $validated['date'],
                     'selected_slot' => $validated['selected_slot']
                 ])
             ]);
@@ -144,7 +117,7 @@ class BookingController extends Controller
             session([
                 'pending_booking_id' => $booking->id,
                 'pending_payment_id' => $payment->id,
-                'booking_data' => $validated // Keep original data if needed
+                'booking_data'       => $validated // Keep original data if needed
             ]);
 
             // Create Tap charge and get payment URL
@@ -228,7 +201,7 @@ class BookingController extends Controller
                 'content-type: application/json',
                 'lang_code: en'
             ],
-            CURLOPT_SSL_VERIFYPEER => false,  // ✅ SSL fix
+            CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => false
         ]);
 
@@ -244,10 +217,6 @@ class BookingController extends Controller
         ]);
 
         $result = json_decode($response, true) ?: ['raw' => $response];
-        Log::info('Tap Charge Response', [
-            'http_code' => $httpCode,
-            'transaction' => $result['transaction']['url'],
-        ]);
 
         if ($httpCode == 200 && isset($result['transaction']['url'])) {
             return $result['transaction']['url'];
@@ -259,80 +228,7 @@ class BookingController extends Controller
 
     public function tapCallback(Request $request)
     {
-        Log::info('Tap Charge Response', [
-            'tap call back function called',
-        ]);
-        try {
-            $chargeId = $request->id;
-
-            // Verify payment status
-            $charge = $this->verifyTapCharge($chargeId);
-
-            if ($charge['status'] === 'CAPTURED') {
-                $bookingData = session('pending_booking');
-
-                if (!$bookingData) {
-                    throw new \Exception('No pending booking in session');
-                }
-
-                try {
-                    $booking = Booking::create([
-                        'user_id' => auth()->id() ?? null,
-                        'package_id' => $bookingData['package_id'],
-                        'booking_start_time' => $bookingData['selected_slot'],
-                        'duration_minutes' => $bookingData['duration_minutes'] ?? 60,
-                        'customer_name' => $bookingData['customer_name'],
-                        'customer_phone' => $bookingData['customer_phone'],
-                        'customer_email' => $bookingData['customer_email'],
-                        'final_price' => $bookingData['total_amount'],
-                        'people_count' => $bookingData['num_people'],
-                        'total_amount' => $bookingData['total_amount'],
-                        'status' => 'paid',
-                        'payment_id' => $chargeId
-                    ]);
-
-                    // Create payment record
-                    $payment = Payment::create([
-                        'booking_id' => $booking->id,
-                        'amount' => $bookingData['total_amount'],
-                        'currency' => 'SAR',
-                        'status' => 'completed',
-                        'payment_method' => 'tap',
-                        'transaction_id' => $chargeId,
-                        'metadata' => json_encode([
-                            'tap_response' => $charge,
-                            'card_brand' => $charge['card']['brand'] ?? null,
-                            'card_last4' => $charge['card']['last4'] ?? null,
-                        ])
-                    ]);
-
-                    session()->forget('pending_booking');
-
-                    Log::info('Payment completed successfully', [
-                        'booking_id' => $booking->id,
-                        'payment_id' => $payment->id
-                    ]);
-
-                    return redirect()->route('tap.success')->with('success', 'Booking confirmed!');
-                } catch (\Exception $e) {
-                    Log::critical('Payment was captured but database save failed!', [
-                        'charge_id' => $chargeId,
-                        'error' => $e->getMessage(),
-                        'booking_data' => $bookingData
-                    ]);
-
-                    // Notify admin, store in failed transactions, etc.
-
-                    return redirect()->route('tap.failed')
-                        ->with('error', 'Payment successful but booking failed. Please contact support with ID: ' . $chargeId);
-                }
-            }
-
-            return redirect()->route('tap.failed')->with('error', 'Payment not captured');
-        } catch (\Exception $e) {
-            Log::error('Tap callback failed: ' . $e->getMessage());
-            return redirect()->route('tap.failed')->with('error', 'Payment verification failed');
-        }
+        //
     }
 
     private function verifyTapCharge($chargeId)
@@ -340,14 +236,14 @@ class BookingController extends Controller
         $secretKey = config('tap.secret_key');
 
         $ch = curl_init();
-        curl_setopt_array($ch, [  // ✅ Official style
-            CURLOPT_URL => "https://api.tap.company/v2/charges/{$chargeId}",  // ✅ v2 endpoint
+        curl_setopt_array($ch, [ 
+            CURLOPT_URL => "https://api.tap.company/v2/charges/{$chargeId}", 
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",  // ✅ GET method
+            CURLOPT_CUSTOMREQUEST => "GET", 
             CURLOPT_HTTPHEADER => [
                 "Authorization: Bearer {$secretKey}",
                 "accept: application/json"
@@ -386,7 +282,6 @@ class BookingController extends Controller
     public function handleRedirect(Request $request)
     {
         $tapId = $request->query('tap_id');
-        Log::info('Tap redirect', ['tap_id' => $tapId]);
 
         if (!$tapId) {
             return view('tap.failed', [
@@ -413,8 +308,6 @@ class BookingController extends Controller
                         'payment_id' => $paymentId
                     ]);
                 } else {
-                    Log::error('No pending booking/payment found for tap_id: ' . $tapId);
-
                     try {
                         $charge = $this->verifyTapCharge($tapId);
                         Log::info('Charge status for orphaned redirect', [
@@ -453,14 +346,23 @@ class BookingController extends Controller
                 ]);
 
                 session()->forget(['pending_booking_id', 'pending_payment_id', 'booking_data']);
-
+                try {
+                    // Send email to customer
+                    Mail::to($booking->customer_email)
+                        ->send(new BookingNotification($booking, 'customer'));
+                    // Send email to owner
+                    Mail::to(env('OWNER_EMAIL'))
+                        ->send(new BookingNotification($booking, 'owner'));
+                } catch (\Exception $e) {
+                    Log::error('Failed to send booking emails: ' . $e->getMessage());
+                }
+                
                 Log::info('Payment completed successfully', [
                     'booking_id' => $bookingId,
                     'payment_id' => $paymentId,
                     'tap_id' => $tapId
                 ]);
 
-                // ✅ Return success view with all booking data
                 return view('tap.success', [
                     'transactionId' => $tapId,
                     'packageName' => $booking->package->name ?? 'Package',
@@ -512,7 +414,6 @@ class BookingController extends Controller
                 }
             }
 
-            // ✅ Return failed view with error
             return view('tap.failed', [
                 'error' => 'Unable to verify payment: ' . $e->getMessage(),
                 'tapId' => $tapId

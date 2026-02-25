@@ -27,6 +27,7 @@ class CalendarController extends Controller
         // Current bookings
         $currentBookings = Booking::whereDate('booking_start_time', $date)
             ->where('package_id', $packageId)
+            ->where('status', 'paid')
             ->select('id', 'booking_start_time', 'duration_minutes')
             ->with('package')
             ->get()

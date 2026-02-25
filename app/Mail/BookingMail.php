@@ -8,20 +8,22 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Mail\Mailables\Address;
+use App\Models\Booking;
 
-class BookingMail extends Mailable
+class BookingNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $booking; // Make the booking data accessible to the view
+    public $recipientType; // To determine if it's for user or admin
 
     /**
      * Create a new message instance.
      */
-    public function __construct($booking)
+    public function __construct(Booking $booking, string $recipientType)
     {
         $this->booking = $booking;
+        $this->recipientType = $recipientType;
     }
 
     /**
@@ -29,21 +31,12 @@ class BookingMail extends Mailable
      */
     public function envelope(): Envelope
     {
-        if ($this->booking->email_type === 'user') {
-            return new Envelope(
-                subject: 'Booking Request Received',
-                replyTo: [
-                    new Address('info@tunbridgewells888.co.uk', 'Tunbridge Wells 888'),
-                ],
-            );
-        } else {
-            return new Envelope(
-                subject: 'New Booking Request Received',
-                replyTo: [
-                    new Address($this->booking->email, $this->booking->name ?? 'Customer'),
-                ],
-            );
-        }
+        $subject = $this->recipientType === 'customer' 
+            ? 'Your Booking Confirmation'
+            : 'New Booking Received';
+        return new Envelope(
+            subject: $subject,
+        );
     }
 
     /**
@@ -52,9 +45,10 @@ class BookingMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mails.bookingMail',
+            view: 'emails.booking-notification',
             with: [
                 'booking' => $this->booking, // Pass the booking data to the view
+                'recipientType' => $this->recipientType, // Pass the recipient type to the view
             ],
         );
     }
