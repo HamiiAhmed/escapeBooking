@@ -31,11 +31,11 @@
                                             <th>ID</th>
                                             <th>Customer</th>
                                             <th>Package</th>
+                                            <th>Date</th>
                                             <th>Time Slot</th>
                                             <th>People</th>
                                             <th>Amount</th>
                                             <th>Status</th>
-                                            <th>Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -48,7 +48,8 @@
                                                     <small>{{ $booking->customer_phone }}</small>
                                                 </td>
                                                 <td>{{ $booking->package->name ?? 'N/A' }}</td>
-                                                <td>{{ $booking->booking_start_time ?? 'N/A' }}</td>
+                                                <td>{{ $booking->booking_start_time->format('d M Y') }}</td>
+                                                <td>{{ $booking->booking_start_time->format('g:i A') }}</td>
                                                 <td>{{ $booking->people_count }}</td>
                                                 <td>{{ number_format($booking->total_amount, 2) }}</td>
                                                 <td>
@@ -70,7 +71,6 @@
                                                         @break
                                                     @endswitch
                                                 </td>
-                                                <td>{{ $booking->created_at->format('d M Y') }}</td>
                                                 <td>
                                                     <a href="{{ route('admin.bookings.show', $booking) }}"
                                                         class="btn btn-sm btn-info">View</a>

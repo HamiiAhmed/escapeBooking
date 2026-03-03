@@ -136,7 +136,7 @@
                                 <li class="nav-item">
                                     <a href="{{ route('admin.bookings.index') }}"
                                         class="nav-link {{ request()->is('admin/bookings*') ? 'active' : '' }}">
-                                        <i class="nav-icon fa-solid fa-ticket-alt"></i>
+                                        <i class="nav-icon fa-solid fa-calendar-check"></i>
                                         <p>Bookings</p>
                                     </a>
                                 </li>
@@ -156,7 +156,7 @@
                                 <li class="nav-item">
                                     <a href="{{ route('admin.coupons.index') }}"
                                         class="nav-link {{ request()->is('admin/coupons') ? 'active' : '' }}">
-                                        <i class="nav-icon fa-solid fa-clock"></i>
+                                        <i class="nav-icon fa-solid fa-tag"></i>
                                         <p>Coupons</p>
                                     </a>
                                 </li>
@@ -167,14 +167,14 @@
                                 <li class="nav-item">
                                     <a href="{{ route('admin.payments.index') }}"
                                         class="nav-link {{ request()->is('admin/payments*') ? 'active' : '' }}">
-                                        <i class="nav-icon fa-solid fa-credit-card"></i>
+                                        <i class="nav-icon fa-solid fa-money-bill-wave"></i>
                                         <p>Payments</p>
                                     </a>
                                 </li>
                             @endcan
 
                             <!-- Divider -->
-                            <li class="nav-header">USER MANAGEMENT</li>
+                            <li class="nav-header text-white">USER MANAGEMENT</li>
 
                             <!-- Users Module -->
                             @can('view', $modules[2])
@@ -213,7 +213,7 @@
                             @endcan --}}
 
                             <!-- Divider -->
-                            <li class="nav-header">ACCOUNT</li>
+                            <li class="nav-header text-white">ACCOUNT</li>
 
                             <!-- Profile -->
                             <li class="nav-item">

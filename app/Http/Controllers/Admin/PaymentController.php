@@ -28,7 +28,7 @@ class PaymentController extends Controller
         $title = 'Payments';
         $module = $this->module;
 
-        $query = Payment::with(['booking', 'user'])
+        $query = Payment::with(['booking', 'user'])->where('status', '=', 'completed')
             ->latest(); // Most recent first
 
         // Filter by status if provided

@@ -13,14 +13,38 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\{PackageController, BookingController};
 use App\Http\Controllers\Admin\{BookingController as PublicBookingController};
 use App\Http\Middleware\{logoutCheck, loginCheck};
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookingNotification;
+use App\Models\Booking;
 
 // ================================
 // PUBLIC ROUTES (Customer Facing)
 // ================================
-Route::get('/', function () {
-    return view('index');
+// Route::get('/', function () {
+//     return view('index');
+// });
+
+Route::get('/test-email-12345', function () {
+    try {
+        $booking = Booking::first(); 
+        Mail::to($booking->customer_email)->send(new BookingNotification($booking, 'customer'));
+        Mail::to(env('OWNER_EMAIL'))->send(new BookingNotification($booking, 'owner'));
+        return response()->json([
+            'success' => true,
+            'message' => 'Test emails sent successfully!',
+            'customer_email' => $booking->customer_email,
+            'owner_email' => env('OWNER_EMAIL')
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to send email: ' . $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
 });
 
+Route::get('/', [CalendarController::class, 'index']);
 Route::get('/booking-calendar', [CalendarController::class, 'index'])->name('booking.calendar');
 Route::get('/calendar/getBookings', [CalendarController::class, 'getBookings'])->name('booking.getBookings');
 

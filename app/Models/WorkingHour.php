@@ -18,6 +18,8 @@ class WorkingHour extends Model
     ];
 
     protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
         'is_overnight' => 'boolean',
         'is_active' => 'boolean'
     ];

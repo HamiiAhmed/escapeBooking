@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 
 @section('content')
-    <div class="app-content-header">
+    {{-- <div class="app-content-header">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6"></div>
@@ -13,54 +13,78 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="app-content">
         <div class="container-fluid">
             <!-- Statistics Cards -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="small-box bg-success">
+            <div class="row mt-1">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-dark">
                         <div class="inner">
                             <h3>SAR {{ number_format($stats['total_completed'] ?? 0, 2) }}</h3>
                             <p>Completed Payments</p>
                         </div>
-                        <div class="icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
+                        <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path clip-rule="evenodd" fill-rule="evenodd"
+                                d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z">
+                            </path>
+                            <path clip-rule="evenodd" fill-rule="evenodd"
+                                d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z">
+                            </path>
+                        </svg>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="small-box bg-warning">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-warning">
                         <div class="inner">
                             <h3>SAR {{ number_format($stats['total_pending'] ?? 0, 2) }}</h3>
                             <p>Pending Payments</p>
                         </div>
-                        <div class="icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
+                        <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path clip-rule="evenodd" fill-rule="evenodd"
+                                d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z">
+                            </path>
+                            <path clip-rule="evenodd" fill-rule="evenodd"
+                                d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z">
+                            </path>
+                        </svg>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="small-box bg-danger">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-danger">
                         <div class="inner">
-                            <h3>{{ $stats['total_failed'] ?? 0 }}</h3>
+                            <h3>SAR {{ number_format($stats['total_failed'] ?? 0, 2) }}</h3>
                             <p>Failed Payments</p>
                         </div>
-                        <div class="icon">
-                            <i class="fas fa-times-circle"></i>
-                        </div>
+                        <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path clip-rule="evenodd" fill-rule="evenodd"
+                                d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z">
+                            </path>
+                            <path clip-rule="evenodd" fill-rule="evenodd"
+                                d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z">
+                            </path>
+                        </svg>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="small-box bg-info">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-secondary">
                         <div class="inner">
-                            <h3>{{ $stats['today_count'] ?? 0 }}</h3>
+                            <h3>SAR {{ number_format($stats['today_count'] ?? 0, 2) }}</h3>
                             <p>Today's Transactions</p>
                         </div>
-                        <div class="icon">
-                            <i class="fas fa-calendar-day"></i>
-                        </div>
+                        <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path clip-rule="evenodd" fill-rule="evenodd"
+                                d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z">
+                            </path>
+                            <path clip-rule="evenodd" fill-rule="evenodd"
+                                d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z">
+                            </path>
+                        </svg>
                     </div>
                 </div>
             </div>
@@ -70,14 +94,14 @@
                     <div class="card">
                         <div class="card-header">
                             <h2 class="card-title">Payments Management</h2>
-                            @can('export', $module)
+                            {{-- @can('export', $module) --}}
                                 <div class="float-end">
                                     <a href="{{ route('admin.payments.export') }}?{{ http_build_query(request()->query()) }}"
                                         class="btn btn-success me-2">
                                         <i class="fas fa-download"></i> Export CSV
                                     </a>
                                 </div>
-                            @endcan
+                            {{-- @endcan --}}
                         </div>
                         <div class="card-body">
                             <!-- Filters -->
@@ -117,7 +141,7 @@
                                                 value="{{ request('search') }}">
                                         </div>
                                         <div class="col-md-2 d-flex align-items-end">
-                                            <button type="submit" class="btn btn-primary me-2">
+                                            <button type="submit" class="btn bg-maroon me-2">
                                                 <i class="fas fa-filter"></i> Apply
                                             </button>
                                             <a href="{{ route('admin.payments.index') }}" class="btn btn-secondary">

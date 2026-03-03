@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EscapeBooking - Package First Calendar</title>
+    <title>Escape Booking</title>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
@@ -146,6 +146,23 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: auto;
+        }
+        
+        .back-website-button{
+            background: #6b0501;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: auto;
+        }
+        
+        .back-website-button a{
+            color:white;
+            text-decoration:none;
         }
 
         /* CALENDAR SECTION - SHOWS AFTER PACKAGE SELECTION */
@@ -390,6 +407,7 @@
 </head>
 
 <body>
+    <button class="back-website-button"><a href="https://escape.sa/">Back To Website</a></button>
     <div class="calendar-wrapper">
         <div class="header">
             <h1><i class="fas fa-calendar-alt"></i> Escape Booking</h1>
@@ -468,7 +486,7 @@
                     <div class="compact-package-card" onclick="selectPackage(${pkg.id}, this)">
                         <div class="compact-content">
                             <div class="compact-name">${pkg.name}</div>
-                            <div class="compact-price">Rs ${pkg.price}</div>
+                            <div class="compact-price">SAR ${pkg.price}</div>
                             <div class="compact-duration">Duration: ${pkg.duration_minutes}min</div>
                             <div class="compact-bookings">People # ${pkg.min_bookings}-${pkg.max_bookings}</div>
                             <button class="compact-book-btn">Select Package</button>
@@ -527,7 +545,7 @@
 
             // AJAX call for slots
             $.ajax({
-                url: '/calendar/getBookings',
+                url: '{{ route('booking.getBookings') }}',
                 method: 'GET',
                 data: {
                     package_id: selectedPackageId,
@@ -578,7 +596,7 @@
                         <input type="hidden" name="package_max" value="${packageData.max_bookings}">
                         <input type="hidden" name="package_price" value="${packageData.price}">
                         <input type="hidden" name="selected_slot" id="selectedSlot">
-                        <div id="totalPrice">Total: Rs 0</div>
+                        <div id="totalPrice">Total: SAR 0</div>
                         <button type="submit" class="book-now-btn" id="bookBtn" disabled>Proceed to Payment</button>
                     </form>
                 </div>
