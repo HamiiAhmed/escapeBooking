@@ -147,8 +147,8 @@
             cursor: pointer;
             margin-top: auto;
         }
-        
-        .back-website-button{
+
+        .back-website-button {
             background: #6b0501;
             color: white;
             border: none;
@@ -159,10 +159,10 @@
             cursor: pointer;
             margin-top: auto;
         }
-        
-        .back-website-button a{
-            color:white;
-            text-decoration:none;
+
+        .back-website-button a {
+            color: white;
+            text-decoration: none;
         }
 
         /* CALENDAR SECTION - SHOWS AFTER PACKAGE SELECTION */
@@ -293,7 +293,8 @@
 
         /* BOOKING FORM */
         .booking-form {
-            background: #6b0501;
+            background: #fff;
+            /* background: #6b0501; */
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -306,7 +307,7 @@
         .form-group label {
             display: block;
             font-weight: 600;
-            color: #fff;
+            color: #6b0501;
             margin-bottom: 5px;
         }
 
@@ -342,7 +343,7 @@
         .book-now-btn {
             width: 100%;
             padding: 15px;
-            background: #cf9b5d;
+            background: #6b0501;
             color: white;
             border: none;
             border-radius: 10px;
@@ -350,11 +351,18 @@
             font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
+            transition: all 0.3s ease;
         }
 
         .book-now-btn:hover {
-            background: white;
-            color: #cf9b5d;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            opacity: 0.95;
+        }
+
+        .book-now-btn:active {
+            transform: translateY(0);
+            box-shadow: none;
         }
 
         .book-now-btn:disabled {
@@ -365,9 +373,39 @@
         #totalPrice {
             font-size: 18px;
             font-weight: bold;
-            color: white;
+            color: #6b0501;
             margin: 15px 0;
             text-align: center;
+        }
+
+        #applyCouponBtn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            background: #6b0501;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        #applyCouponBtn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            opacity: 0.95;
+        }
+
+        #applyCouponBtn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        #applyCouponBtn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
         }
 
         @media (max-width: 768px) {
@@ -445,6 +483,8 @@
         let selectedDate = null;
         let selectedSlot = null;
         let calendar = null;
+        let appliedCoupon = null;
+        let discountAmount = 0;
 
         $(document).ready(function() {
             // Display packages first
@@ -500,7 +540,7 @@
         function selectPackage(packageId, element) {
             selectedPackageId = packageId;
             selectedPackage = packages.find(p => p.id === packageId);
-            
+
             $('.compact-package-card').removeClass('selected');
             $(element).addClass('selected');
 
@@ -526,7 +566,7 @@
             selectedPackage = null;
             $('.compact-package-card').removeClass('selected');
             hideSlots();
-            
+
             setTimeout(() => {
                 document.getElementById('packagesSection').scrollIntoView({
                     behavior: 'smooth',
@@ -596,6 +636,14 @@
                         <input type="hidden" name="package_max" value="${packageData.max_bookings}">
                         <input type="hidden" name="package_price" value="${packageData.price}">
                         <input type="hidden" name="selected_slot" id="selectedSlot">
+                        <div class="form-group">
+                            <label>Coupon Code</label>
+                            <div style="display:flex; gap:10px;">
+                                <input type="text" name="coupon_code" id="couponCode" placeholder="Enter Coupon">
+                                <button type="button" id="applyCouponBtn">Apply</button>
+                            </div>
+                            <small id="couponMessage" style="display:block;margin-top:5px;"></small>
+                        </div>
                         <div id="totalPrice">Total: SAR 0</div>
                         <button type="submit" class="book-now-btn" id="bookBtn" disabled>Proceed to Payment</button>
                     </form>
@@ -624,6 +672,11 @@
                 numPeopleSelect.append(`<option value="${i}">${i} People</option>`);
             }
 
+            if (packageData.min_bookings) {
+                numPeopleSelect.val(packageData.min_bookings);
+                calculateTotal();
+            }
+
             // Total price calculation
             $('#numPeople, #selectedSlot').on('change', function() {
                 calculateTotal();
@@ -635,11 +688,50 @@
         }
 
         function calculateTotal() {
-            const numPeople = parseInt($('#numPeople').val()) || 0;
-            const packagePrice = parseInt($('input[name="package_price"]').val()) || 0;
-            const total = numPeople * packagePrice;
 
-            $('#totalPrice').text(`Total: SAR ${total.toLocaleString()}`);
+            const numPeople = parseInt($('#numPeople').val()) || 0;
+            const packagePrice = parseFloat($('input[name="package_price"]').val()) || 0;
+
+            let total = numPeople * packagePrice;
+            let discount = 0;
+
+            if (appliedCoupon) {
+                let couponValue = parseFloat(appliedCoupon.value);
+                let minAmount = parseFloat(appliedCoupon.min_amount);
+
+                // MIN AMOUNT CHECK
+                if (minAmount > 0 && total < minAmount) {
+
+                    $('#couponMessage')
+                        .text(`Minimum amount SAR ${minAmount} required for this coupon.`)
+                        .css('color', 'red');
+
+                    discount = 0;
+
+                } else {
+
+                    if (appliedCoupon.type === 'fixed') {
+                        discount = couponValue;
+                    }
+
+                    if (appliedCoupon.type === 'percent') {
+                        discount = (total * couponValue) / 100;
+                    }
+
+                }
+            }
+
+            total = total - discount;
+
+            if (total < 0) total = 0;
+
+            if (appliedCoupon && discount > 0) {
+                $('#couponMessage')
+                    .text(`Coupon applied! You saved SAR ${Math.round(discount)}.`)
+                    .css('color', 'green');
+            }
+
+            $('#totalPrice').text(`Total: SAR ${Math.round(total).toLocaleString()}`);
 
             if (numPeople > 0 && selectedSlot) {
                 $('#bookBtn').prop('disabled', false);
@@ -709,6 +801,42 @@
                     }
 
                     alert(`❌ ${errorMsg}`);
+                    $('#bookBtn').prop('disabled', false);
+                }
+            });
+        });
+
+        $(document).on('click', '#applyCouponBtn', function() {
+
+            const code = $('#couponCode').val().trim();
+
+            if (!code) {
+                alert('Please enter coupon code');
+                return;
+            }
+            $('#bookBtn').prop('disabled', true);
+
+            $.ajax({
+                url: '{{ route('booking.checkCoupon') }}',
+                method: 'POST',
+                data: {
+                    code: code,
+                    package_id: selectedPackageId,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+
+                    if (response.valid) {
+                        appliedCoupon = response.coupon;
+                        $('#couponMessage')
+                            .text('Coupon applied successfully!')
+                            .css('color', 'green');
+                        calculateTotal();
+                    } else {
+                        appliedCoupon = null;
+                        $('#couponMessage').text('Invalid coupon!').css('color', 'red');
+                        calculateTotal();
+                    }
                     $('#bookBtn').prop('disabled', false);
                 }
             });

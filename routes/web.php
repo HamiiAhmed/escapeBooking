@@ -60,6 +60,9 @@ Route::get('/packages', [PublicBookingController::class, 'index'])->name('packag
 Route::get('/book/{slug}', [PublicBookingController::class, 'show'])->name('book.package');
 Route::post('/bookings/store', [PublicBookingController::class, 'store'])->name('bookings.store');
 
+Route::post('/check-coupon', [PublicBookingController::class, 'checkCoupon'])
+    ->name('booking.checkCoupon');
+
 // ================================
 // ADMIN AUTH ROUTES
 // ================================
